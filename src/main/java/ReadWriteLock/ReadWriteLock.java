@@ -62,6 +62,9 @@ public class ReadWriteLock {
     public void releaseWriteLock() {
         lock.lock();
         try {
+            if (numWriters <= 0) {
+                throw new IllegalMonitorStateException();
+            }
             numWriters -= 1;
 
             // give both readers and writers opportunities to run
