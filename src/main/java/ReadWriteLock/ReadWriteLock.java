@@ -30,6 +30,10 @@ public class ReadWriteLock {
     public void releaseReadLock() {
         lock.lock();
         try {
+            if (numReaders <= 0) {
+                throw new IllegalMonitorStateException();
+            }
+
             numReaders -= 1;
             // notify one writer to start
             writersOkay.signal();
