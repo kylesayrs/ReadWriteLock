@@ -41,7 +41,7 @@ public class ReadWriteLockTest
                 try {
                     lock.aquireReadLock();
                     value.set(log.getLast());
-                    lock.releaseWriteLock();
+                    lock.releaseReadLock();
                 } catch (InterruptedException exception) {}
             }
         };
@@ -86,14 +86,13 @@ public class ReadWriteLockTest
         AtomicReference<Integer> value = new AtomicReference<>();
         Thread readerThread = makeReaderThread(lock, log, value);
 
-        Thread writerThread = makeWriterThread(lock, log, 0);
-
-        writerThread.start();
+        lock.aquireWriteLock();
         readerThread.start();
 
-        // TODO: need to pass an atomic reference "duration" which records
-        // start and stop times, then compare the start and stop times
+        log.add(0);
+        lock.releaseWriteLock();
 
-        //assertTrue(value.get() != null && value.get() == 0);
+        readerThread.join();
+        assertTrue(value.get() != null && value.get() == 0);
     }
 }
