@@ -47,7 +47,7 @@ public class ReadWriteLock {
         lock.lock();
         try {
             // cannot write while readers are reading or writers are writing
-            while (numReaders >= 0 || numWriters >= 0) {
+            while (numReaders > 0 || numWriters > 0) {
                 // atomically suspends thread and releases lock
                 writersOkay.await();
                 // requires lock before returning to thread
