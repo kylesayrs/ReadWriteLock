@@ -135,4 +135,35 @@ public class ReadWriteLockTest
         expectedLog.add(1);
         assertTrue(log.equals(expectedLog));
     }
+
+    public void testWriterOrder() throws InterruptedException {
+        ReadWriteLock lock = new ReadWriteLock();
+        ArrayList<Integer> log = new ArrayList<>();
+
+        Thread writerThread0 = makeWriterThread(lock, log, 0);
+        Thread writerThread1 = makeWriterThread(lock, log, 1);
+        Thread writerThread2 = makeWriterThread(lock, log, 2);
+        Thread writerThread3 = makeWriterThread(lock, log, 3);
+        Thread writerThread4 = makeWriterThread(lock, log, 4);
+
+        writerThread0.start();
+        writerThread1.start();
+        writerThread2.start();
+        writerThread3.start();
+        writerThread4.start();
+
+        writerThread0.join();
+        writerThread1.join();
+        writerThread2.join();
+        writerThread3.join();
+        writerThread4.join();
+
+        ArrayList<Integer> expectedLog = new ArrayList<>();
+        expectedLog.add(0);
+        expectedLog.add(1);
+        expectedLog.add(2);
+        expectedLog.add(3);
+        expectedLog.add(4);
+        assertTrue(log.equals(expectedLog));
+    }
 }
