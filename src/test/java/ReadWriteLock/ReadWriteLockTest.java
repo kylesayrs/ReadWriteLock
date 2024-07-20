@@ -1,6 +1,7 @@
 package ReadWriteLock;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import junit.framework.Test;
@@ -40,7 +41,11 @@ public class ReadWriteLockTest
             public void run() {
                 try {
                     lock.aquireReadLock();
-                    value.set(log.getLast());
+                    try {
+                        value.set(log.getLast());
+                    } catch (NoSuchElementException e) {
+                        value.set(null);
+                    }
                     lock.releaseReadLock();
                 } catch (InterruptedException exception) {}
             }
@@ -94,5 +99,20 @@ public class ReadWriteLockTest
 
         readerThread.join();
         assertTrue(value.get() != null && value.get() == 0);
+    }
+
+    public void testWriterReaderExclusivity() throws InterruptedException {
+        ReadWriteLock lock = new ReadWriteLock();
+        ArrayList<Integer> log = new ArrayList<>();
+        
+        Thread writerThread = makeWriterThread(lock, log, 0);
+        
+        lock.aquireReadLock();
+        writerThread.start();
+
+        assertTrue(log.size() == 0);
+
+        lock.releaseReadLock();
+        writerThread.join();
     }
 }
