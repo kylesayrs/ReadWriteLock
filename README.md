@@ -1,4 +1,5 @@
 # Read Write Lock #
+Lock to allow for concurrent and asynchronous reading but synchronous and sequential writing
 
 ## Readers ##
 1. Readers asyncronous, meaning multiple reader threads can execute at the same time
@@ -10,4 +11,18 @@
 2. Writers are unordered, meaning that writers write in arbitary order
 3. Writers cannot write while any reader is reading or any other writer is writing
 
-With respect to (2), write operations can be made ordered by only using one writer thread which processes from a job queue. After each job is processed, the the writer thread releases the write lock and immediately attempts to aquire. Releasing and reaquiring prevents reader starvation due to a continuous stream of write jobs.
+## Usage ##
+```java
+ReadWriteLock lock = new ReadWriteLock();
+
+// reader thread
+lock.aquireReadLock();
+lock.releaseReadLock();
+
+// writer thread
+lock.aquireWriteLock();
+lock.releaseWriteLock();
+```
+
+## Starvation Prevention ##
+Write operations can be made ordered by only using one writer thread which processes from a job queue. After each job is processed, the the writer thread releases the write lock and immediately attempts to aquire. Releasing and reaquiring prevents reader starvation due to a continuous stream of write jobs.
