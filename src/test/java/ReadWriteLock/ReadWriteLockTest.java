@@ -110,9 +110,29 @@ public class ReadWriteLockTest
         lock.aquireReadLock();
         writerThread.start();
 
-        assertTrue(log.size() == 0);
+        assertTrue(log.isEmpty());
 
         lock.releaseReadLock();
         writerThread.join();
+    }
+
+    public void testWriterWriterExclusivity() throws InterruptedException {
+        ReadWriteLock lock = new ReadWriteLock();
+        ArrayList<Integer> log = new ArrayList<>();
+
+        Thread writerThread = makeWriterThread(lock, log, 1);
+
+        lock.aquireWriteLock();
+        writerThread.start();
+
+        log.add(0);
+
+        lock.releaseWriteLock();
+        writerThread.join();
+
+        ArrayList<Integer> expectedLog = new ArrayList<>();
+        expectedLog.add(0);
+        expectedLog.add(1);
+        assertTrue(log.equals(expectedLog));
     }
 }
