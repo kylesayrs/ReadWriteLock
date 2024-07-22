@@ -139,18 +139,18 @@ public class ReadWriteLockTest
     public void testWriterOrder() throws InterruptedException {
         ReadWriteLock lock = new ReadWriteLock();
         ArrayList<Integer> log = new ArrayList<>();
-        int numThreads = 3;
+        int numThreads = 100;
 
         // make threads
         Thread[] threads = new Thread[numThreads];
         for (int i = 0; i < numThreads; i++) {
             threads[i] = makeWriterThread(lock, log, i);
+            threads[i].start();
         }
 
         // start threads
-        for (int i = 0; i < numThreads; i++) {
-            threads[i].start();
-        }
+        //for (int i = 0; i < numThreads; i++) {
+        //}
 
         // join threads
         for (int i = 0; i < numThreads; i++) {
@@ -162,6 +162,9 @@ public class ReadWriteLockTest
         for (int i = 0; i < numThreads; i++) {
             expectedLog.add(i);
         }
+
+        System.out.println(log);
+        System.out.println(expectedLog);
 
         assertTrue(log.equals(expectedLog));
     }
