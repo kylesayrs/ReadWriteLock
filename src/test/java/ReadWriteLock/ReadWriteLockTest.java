@@ -27,7 +27,7 @@ public class ReadWriteLockTest
             @Override
             public void run() {
                 try {
-                    lock.aquireWriteLock();
+                    lock.acquireWriteLock();
                     log.add(value);
                     lock.releaseWriteLock();
                 } catch (InterruptedException exception) {}
@@ -40,7 +40,7 @@ public class ReadWriteLockTest
             @Override
             public void run() {
                 try {
-                    lock.aquireReadLock();
+                    lock.acquireReadLock();
                     try {
                         value.set(log.getLast());
                     } catch (NoSuchElementException e) {
@@ -55,13 +55,13 @@ public class ReadWriteLockTest
     public void testAsyncReaders() throws InterruptedException {
         ReadWriteLock lock = new ReadWriteLock();
 
-        lock.aquireReadLock();
-        lock.aquireReadLock();
-        lock.aquireReadLock();
+        lock.acquireReadLock();
+        lock.acquireReadLock();
+        lock.acquireReadLock();
 
         lock.releaseReadLock();
 
-        lock.aquireReadLock();
+        lock.acquireReadLock();
 
         lock.releaseReadLock();
         lock.releaseReadLock();
@@ -73,7 +73,7 @@ public class ReadWriteLockTest
 
         boolean raisedException = false;
         try {
-            lock.aquireReadLock();
+            lock.acquireReadLock();
             lock.releaseReadLock();
 
             lock.releaseReadLock();
@@ -91,7 +91,7 @@ public class ReadWriteLockTest
         AtomicReference<Integer> value = new AtomicReference<>();
         Thread readerThread = makeReaderThread(lock, log, value);
 
-        lock.aquireWriteLock();
+        lock.acquireWriteLock();
         readerThread.start();
 
         log.add(0);
@@ -107,7 +107,7 @@ public class ReadWriteLockTest
         
         Thread writerThread = makeWriterThread(lock, log, 0);
         
-        lock.aquireReadLock();
+        lock.acquireReadLock();
         writerThread.start();
 
         assertTrue(log.isEmpty());
@@ -122,7 +122,7 @@ public class ReadWriteLockTest
 
         Thread writerThread = makeWriterThread(lock, log, 1);
 
-        lock.aquireWriteLock();
+        lock.acquireWriteLock();
         writerThread.start();
 
         log.add(0);

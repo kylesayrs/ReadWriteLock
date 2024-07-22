@@ -11,14 +11,14 @@ public class ReadWriteLock {
     private int numReaders = 0;
     private int numWriters = 0;
 
-    public void aquireReadLock() throws InterruptedException {
+    public void acquireReadLock() throws InterruptedException {
         lock.lock();
         try {
             // cannot read while writers are writing
             while (numWriters > 0) { 
                 // atomically suspends thread and releases lock
                 readersOkay.await();
-                // reaquires lock before returning to thread
+                // reacquires lock before returning to thread
             }
             numReaders += 1;
             
@@ -43,7 +43,7 @@ public class ReadWriteLock {
         }
     }
 
-    public void aquireWriteLock() throws InterruptedException {
+    public void acquireWriteLock() throws InterruptedException {
         lock.lock();
         try {
             // cannot write while readers are reading or writers are writing
