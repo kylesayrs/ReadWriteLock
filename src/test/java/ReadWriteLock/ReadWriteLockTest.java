@@ -139,31 +139,30 @@ public class ReadWriteLockTest
     public void testWriterOrder() throws InterruptedException {
         ReadWriteLock lock = new ReadWriteLock();
         ArrayList<Integer> log = new ArrayList<>();
+        int numThreads = 3;
 
-        Thread writerThread0 = makeWriterThread(lock, log, 0);
-        Thread writerThread1 = makeWriterThread(lock, log, 1);
-        Thread writerThread2 = makeWriterThread(lock, log, 2);
-        Thread writerThread3 = makeWriterThread(lock, log, 3);
-        Thread writerThread4 = makeWriterThread(lock, log, 4);
+        // make threads
+        Thread[] threads = new Thread[numThreads];
+        for (int i = 0; i < numThreads; i++) {
+            threads[i] = makeWriterThread(lock, log, i);
+        }
 
-        writerThread0.start();
-        writerThread1.start();
-        writerThread2.start();
-        writerThread3.start();
-        writerThread4.start();
+        // start threads
+        for (int i = 0; i < numThreads; i++) {
+            threads[i].start();
+        }
 
-        writerThread0.join();
-        writerThread1.join();
-        writerThread2.join();
-        writerThread3.join();
-        writerThread4.join();
+        // join threads
+        for (int i = 0; i < numThreads; i++) {
+            threads[i].join();
+        }
 
+        // make expected
         ArrayList<Integer> expectedLog = new ArrayList<>();
-        expectedLog.add(0);
-        expectedLog.add(1);
-        expectedLog.add(2);
-        expectedLog.add(3);
-        expectedLog.add(4);
+        for (int i = 0; i < numThreads; i++) {
+            expectedLog.add(i);
+        }
+
         assertTrue(log.equals(expectedLog));
     }
 }
