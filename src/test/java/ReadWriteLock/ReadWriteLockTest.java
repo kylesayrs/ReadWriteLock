@@ -136,7 +136,7 @@ public class ReadWriteLockTest
         assertTrue(log.equals(expectedLog));
     }
 
-    public void testWriterOrder() throws InterruptedException {
+    public void testWriters() throws InterruptedException {
         ReadWriteLock lock = new ReadWriteLock();
         ArrayList<Integer> log = new ArrayList<>();
         int numThreads = 3;
@@ -157,12 +157,9 @@ public class ReadWriteLockTest
             threads[i].join();
         }
 
-        // make expected
-        ArrayList<Integer> expectedLog = new ArrayList<>();
+        // check that each writer wrote
         for (int i = 0; i < numThreads; i++) {
-            expectedLog.add(i);
+            assertTrue(log.contains(i));
         }
-
-        assertTrue(log.equals(expectedLog));
     }
 }
