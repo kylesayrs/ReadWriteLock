@@ -26,3 +26,6 @@ lock.releaseWriteLock();
 
 ## Starvation Prevention ##
 Write operations can be made ordered by only using one writer thread which processes from a job queue. After each job is processed, the the writer thread releases the write lock and immediately attempts to aquire. Releasing and reaquiring prevents reader starvation due to a continuous stream of write jobs.
+
+## TODO: explore sequential writing ##
+* While it's likely an impossible/malformed problem to have writer threads which act in parallel and grab the writer lock sequentially, we can implement the easier/better formed problem of grabbing the writer thread which priority. If two threads have the same priority, then it's a race to see which thread grabs the lock first. If a writer passes its current time as it's priority, and if all writer threads have a synchronized clock, then we can achieve the best possible approximation of sequential writing.
